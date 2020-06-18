@@ -3,9 +3,13 @@ Projet architecture logicielle
 
 # TodoList
 + Création nouveau ASP.NET Core Web Application `Empty`
-+ Architecture *Racine                  *Racine
-                  *Core                    *Services
-                    *ApiLibrary               *Boissons *Ingrédients
++ Architecture :
+  1. Racine
+      1. Core
+      2. ApiLibrary
+  2. Services
+      1. Ingredient
+      2. Drink
 + ApiLibrary création de la classe Abstract Controller et Abstract Methodes
 + Services mise en place des Controllers Ingredient et Drink
 + Connexion à la base de données Azure
