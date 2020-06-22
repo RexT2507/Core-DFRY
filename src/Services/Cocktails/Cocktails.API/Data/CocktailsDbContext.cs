@@ -27,6 +27,8 @@ namespace Cocktails.API.Data
             base.OnModelCreating(modelBuilder);
         }
 
-        //public DbSet<Ingredients> Ingredients { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+
+        public DbSet<Preparation> Preparations { get; set; }
     }
 }

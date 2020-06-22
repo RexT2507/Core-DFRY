@@ -40,7 +40,7 @@ namespace ApiLibrary.Core.Controllers
         // --- GET --- //
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, string sort, string fields)
+        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields)
         {
             int pagination;
 
