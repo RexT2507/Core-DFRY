@@ -1,0 +1,437 @@
+---
+swagger: "2.0"
+info:
+  description: "Projet Architecture logiciel : API Coktail" 
+  version: 1.0.0
+  title: Projet Architecture logiciel
+  license:
+    name: ASP.NET Core 3.1.0
+    url: https://dotnet.microsoft.com/apps/aspnet
+host: virtserver.swaggerhub.com
+basePath: /api/v1/
+tags:
+- name: Login
+  description: Authentification
+- name: Ingrédients
+  description: CRUD lié aux ingrédients
+- name: Cocktail
+  description: CRUD lié aux cocktail
+schemes:
+- https
+- http
+paths:
+  /login:
+    post:
+      tags:
+      - Login
+      summary: connexion
+      operationId: Login
+      produces:
+      - application/json
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "champs de login"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            username:
+              type: "string"
+              minLength: 1
+              maxLength: 50
+            password:
+              type: "integer"
+              format: "double"
+      responses:
+        "200":
+          description: Succès
+          schema:
+            properties:
+              token: 
+                type: "string"
+                minLength: 1
+                maxLength: 50
+        "404":
+          description: Ressouce non trouvée
+  /ing:
+    get:
+      tags:
+      - Ingrédients
+      summary: Récupération des ingrédients
+      operationId: GetIngredients
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Succès - Renvoi les ingrédients
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Ingredient'
+        "404":
+          description: Ressouce non trouvée
+    post:
+      tags:
+      - Ingrédients
+      summary: "Création d'un ingrédient"
+      operationId: PostIngredients
+      produces:
+      - application/json
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "bearer token de l'utilisateur"
+        required: true
+        type: "string"
+        minLength: 7
+        maxLength: 255
+      - in: "body"
+        name: "body"
+        description: "attributs de l'ingrédient"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            Nom:
+              type: "string"
+              minLength: 1
+              maxLength: 50
+            Teneur_Alcool:
+              type: "integer"
+              format: "double"
+            Mesure:
+              type: "string"
+              minLength: 1
+              maxLength: 10
+      responses:
+        "200":
+          description: Succès - Renvoi l'ingrédient créé
+          schema: 
+            $ref: '#/definitions/Ingredient'
+        "404":
+          description: Ressouce non trouvée
+  /ing/{ingredientId}:
+    get:
+      tags:
+      - Ingrédients
+      summary: "Renvoi d'un ingrédient"
+      operationId: GetIngredientsById
+      produces:
+      - application/json
+      parameters:
+        - in: "path"
+          name: "ingredientId"
+          description: "id de l'ingredient à renvoyer"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Succès - Renvoi l'ingrédients dont l'id est passé en paramètre"
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Ingredient'
+        "404":
+          description: Ressouce non trouvée
+    delete:
+      tags:
+      - Ingrédients
+      summary: "Suppression d'un igredient"
+      operationId: DeleteIngredients
+      produces:
+      - application/json
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "bearer token de l'utilisateur"
+        required: true
+        type: "string"
+        minLength: 7
+        maxLength: 255
+      - in: "path"
+        name: "ingredientId"
+        description: "id de l'ingredient à supprimer"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: Succès
+        "404":
+          description: Ressouce non trouvée
+    put:
+      tags:
+      - Ingrédients
+      summary: "Modification d'un ingrédient"
+      operationId: PutIngredients
+      produces:
+      - application/json
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "bearer token de l'utilisateur"
+        required: true
+        type: "string"
+        minLength: 7
+        maxLength: 255
+      - in: "path"
+        name: "ingredientId"
+        description: "id de l'ingredient à modifier"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "champs de l'ingredient à modifier"
+        required: true
+        schema:
+            type: "object"
+            properties:
+              Nom:
+                type: "string"
+                minLength: 1
+                maxLength: 50
+              Teneur_Alcool:
+                type: "integer"
+                format: "double"
+              Mesure:
+                type: "string"
+                minLength: 1
+                maxLength: 10
+      responses:
+        "200":
+          description: Succès - Renvoi l'ingrédient modifié
+          schema: 
+            $ref: '#/definitions/Ingredient'
+        "404":
+          description: Ressouce non trouvée
+  /cocktail:
+    get:
+      tags:
+      - Cocktail
+      summary: "Récupération des cocktails"
+      operationId: GetCocktail
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Succès - Renvoi des cocktail
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Cocktail'
+        "404":
+          description: Ressouce non trouvée
+    post:
+      tags:
+      - Cocktail
+      summary: "Création d'un cocktail"
+      operationId: PostCocktail
+      produces:
+      - application/json
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "bearer token de l'utilisateur"
+          required: true
+          type: "string"
+          minLength: 7
+          maxLength: 255
+        - in: "body"
+          name: "body"
+          schema:
+            properties:
+              ID:
+                type: "integer"
+                format: "int64"
+              Nom:
+                type: "string"
+                minLength: 1
+                maxLength: 50
+              Origin:
+                type: "string"
+                minLength: 1
+                maxLength: 50
+              Alcool:
+                type: "boolean"
+              ListIngredient:
+                type: array
+                items:
+                  type: "integer"
+                  format: "int64"
+      responses:
+        "200":
+          description: Succès - Renvoi le cocktail créé
+          schema:
+            $ref: '#/definitions/Cocktail'
+              
+        "404":
+          description: Ressouce non trouvée
+  /cocktail/{cocktailId}:
+    get:
+      tags:
+      - Cocktail
+      summary: "Renvoi d'un cocktail"
+      operationId: GetCocktailById
+      produces:
+      - application/json
+      parameters:
+        - in: "path"
+          name: "cocktailId"
+          description: "id du cocktail à renvoyer"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Succès - Renvoi le cocktail dont l'id est passé en paramètre"
+          schema:
+            $ref: '#/definitions/Cocktail'
+        "404":
+          description: Ressouce non trouvée
+    delete:
+      tags:
+      - Cocktail
+      summary: "Suppression d'un cocktail"
+      operationId: DeleteCocktail
+      produces:
+      - application/json
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "bearer token de l'utilisateur"
+        required: true
+        type: "string"
+        minLength: 7
+        maxLength: 255
+      - in: "path"
+        name: "cocktailId"
+        description: "id du cocktail à supprimer"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        schema:
+          properties:
+            ID:
+              type: "integer"
+              format: "int64"
+            Nom:
+              type: "string"
+              minLength: 1
+              maxLength: 50
+            Origin:
+              type: "string"
+              minLength: 1
+              maxLength: 50
+            Alcool:
+              type: "boolean"
+            ListIngredient:
+              type: array
+              items:
+                type: "integer"
+                format: "int64"
+      responses:
+        "200":
+          description: Succès
+        "404":
+          description: Ressouce non trouvée
+    put:
+      tags:
+      - Cocktail
+      summary: "Modification d'un cocktail"
+      operationId: PutCocktail
+      produces:
+      - application/json
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "bearer token de l'utilisateur"
+        required: true
+        type: "string"
+        minLength: 7
+        maxLength: 255
+      - in: "path"
+        name: "cocktailId"
+        description: "id du cocktail à modifier"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "champs du cocktail à modifier"
+        required: true
+        schema:
+            type: "object"
+            properties:
+              Nom:
+                type: "string"
+                minLength: 1
+                maxLength: 50
+              Teneur_Alcool:
+                type: "integer"
+                format: "double"
+              Mesure:
+                type: "string"
+                minLength: 1
+                maxLength: 10
+      responses:
+        "200":
+          description: "Succès - Renvoi l'ingrédients modifier"
+        "404":
+          description: Ressouce non trouvée
+definitions:
+  Ingredient:
+    type: "object"
+    properties:
+      ID:
+        type: "integer"
+        format: "int64"
+      Nom:
+        type: "string"
+        minLength: 1
+        maxLength: 50
+      Teneur_Alcool:
+        type: "integer"
+        format: "double"
+      Mesure:
+        type: "string"
+        minLength: 1
+        maxLength: 10
+    xml:
+      name: "Ingredient"
+      
+  Cocktail:
+    type: "object"
+    properties:
+      ID:
+        type: "integer"
+        format: "int64"
+      Nom:
+        type: "string"
+        minLength: 1
+        maxLength: 50
+      Origin:
+        type: "string"
+        minLength: 1
+        maxLength: 50
+      Alcool:
+        type: "boolean"
+      ListIngredient:
+        type: array
+        items:
+          $ref: '#/definitions/ItemListQuantite'
+      
+  ItemListQuantite:
+    type: "object"
+    properties:
+      Quantite: 
+        type: "integer"
+        format: "float"
+      Ingredient:
+        $ref: '#/definitions/Ingredient'
