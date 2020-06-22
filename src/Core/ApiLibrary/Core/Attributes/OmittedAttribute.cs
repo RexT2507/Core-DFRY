@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiLibrary.Attributes
+namespace ApiLibrary.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
     public class OmittedAttribute : Attribute

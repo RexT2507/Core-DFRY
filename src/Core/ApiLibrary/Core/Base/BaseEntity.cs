@@ -1,9 +1,9 @@
-﻿using ApiLibrary.Attributes;
+﻿using ApiLibrary.Core.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiLibrary.Base
+namespace ApiLibrary.Core.Base
 {
     public class BaseEntity
     {

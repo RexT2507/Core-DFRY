@@ -1,18 +1,25 @@
 ﻿using ApiLibrary.Core.Base;
+using Auth.API.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
-using Cocktails.API.Models;
 
-namespace Cocktails.API.Data
+namespace Auth.API.Data
 {
-    public class CocktailsDbContext : BaseDbContext
+    public class UserDbContext : BaseDbContext
     {
-        public DbSet<Cocktail> Cocktails { get; set; }
+        public DbSet<User> Users { get; set; }
 
-        public CocktailsDbContext(DbContextOptions options) : base(options)
+        public UserDbContext(DbContextOptions options) : base(options)
         {
 
         }
@@ -26,7 +33,5 @@ namespace Cocktails.API.Data
         {
             base.OnModelCreating(modelBuilder);
         }
-
-        //public DbSet<Ingredients> Ingredients { get; set; }
     }
 }

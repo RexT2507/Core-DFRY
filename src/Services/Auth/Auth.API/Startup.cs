@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Cocktails.API.Data;
+using Auth.API.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,8 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 
-namespace Cocktails.API
+namespace Auth.API
 {
     public class Startup
     {
@@ -27,8 +28,8 @@ namespace Cocktails.API
         {
             services.AddApiVersioning();
             services.AddControllers();
-            services.AddDbContext<CocktailsDbContext>(context =>
-                context.UseSqlServer(Configuration.GetConnectionString("CocktailConnection"))
+            services.AddDbContext<UserDbContext>(context =>
+                context.UseSqlServer(Configuration.GetConnectionString("AuthConnection"))
             );
         }
 
@@ -38,6 +39,7 @@ namespace Cocktails.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                IdentityModelEventSource.ShowPII = true;
             }
 
             app.UseRouting();
