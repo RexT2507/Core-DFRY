@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace ApiLibrary.Core.Controllers
 {
@@ -40,7 +41,7 @@ namespace ApiLibrary.Core.Controllers
         // --- GET --- //
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields)
+        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields, [FromQuery] string createdAt)
         {
             int pagination;
 
@@ -50,8 +51,17 @@ namespace ApiLibrary.Core.Controllers
                 {
                     if (fields == null)
                     {
-                        var set = await _db.Set<T>().ToListAsync();
-                        return Ok(set);
+                        if(createdAt == null)
+                        {
+                            var set = await _db.Set<T>().ToListAsync();
+                            return Ok(set);
+                        }
+                        else
+                        {
+                            var set = await _db.Set<T>().WhereDateIs(createdAt).ToListAsync();
+                            return Ok(set);
+                        }
+                        
                     }
                     else
                     {

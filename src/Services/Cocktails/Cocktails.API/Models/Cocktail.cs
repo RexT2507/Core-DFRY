@@ -14,7 +14,7 @@ namespace Cocktails.API.Models
         [Column(TypeName = "nvarchar(50)")]
         public string Origine { get; set; }
         public bool Alcool { get; set; }
-        [Column(TypeName = "decimal(1,1)")]
+        [Column(TypeName = "decimal(3,1)")]
         public decimal Rating { get; set; }
 
     }

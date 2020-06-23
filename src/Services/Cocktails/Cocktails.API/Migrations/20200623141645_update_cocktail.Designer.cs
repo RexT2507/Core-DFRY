@@ -4,14 +4,16 @@ using Cocktails.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cocktails.API.Migrations
 {
     [DbContext(typeof(CocktailsDbContext))]
-    partial class CocktailsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200623141645_update_cocktail")]
+    partial class update_cocktail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
