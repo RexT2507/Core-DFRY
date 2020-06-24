@@ -78,7 +78,7 @@ namespace ApiLibrary.Core.Extensions
 
         // WHERE
 
-        public static IQueryable<T> WhereFieldIsLessOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
+        private static IQueryable<T> WhereFieldIsLessOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
@@ -91,7 +91,7 @@ namespace ApiLibrary.Core.Extensions
             return source.Where(lambda);
         }
 
-        public static IQueryable<T> WhereFieldIsGreaterOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
+        private static IQueryable<T> WhereFieldIsGreaterOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
@@ -113,7 +113,7 @@ namespace ApiLibrary.Core.Extensions
             return source.Where(lambda);
         }
 
-        public static IQueryable<T> WhereFieldIsBetween<T>(this IQueryable<T> source, string fieldName, string value, Type type)
+        private static IQueryable<T> WhereFieldIsBetween<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
@@ -145,7 +145,7 @@ namespace ApiLibrary.Core.Extensions
             return source.Where(lambda);
         }
 
-        public static IQueryable<T> WhereFieldExact<T>(this IQueryable<T> source, string fieldName, string value, Type type)
+        private static IQueryable<T> WhereFieldExact<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
