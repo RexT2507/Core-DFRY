@@ -11,6 +11,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace ApiLibrary.Core.Controllers
 {
@@ -41,115 +42,78 @@ namespace ApiLibrary.Core.Controllers
         // --- GET --- //
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields, [FromQuery] string createdAt)
+        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields, [FromQuery] string tri)
         {
             int pagination;
 
-            if (range == null)
+            var query = _db.Set<T>().AsQueryable<T>();
+
+            if(range != null)
             {
-                if (sort == null)
+                try { pagination = this.GetType().GetCustomAttribute<MaxPaginationAttribute>().Range; } catch (NullReferenceException) { pagination = typeof(ControllerRef<C, T, K>).GetCustomAttribute<MaxPaginationAttribute>().Range; }
+
+                var myRange = range.Split("-");
+
+                query = query.Where(x => x.deletedAt != null);
+
+                int start = Convert.ToInt32(myRange[0]);
+                int end = Convert.ToInt32(myRange[1]);
+                int count = end - start;
+
+                if (count > pagination)
                 {
-                    if (fields == null)
-                    {
-                        if(createdAt == null)
-                        {
-                            var set = await _db.Set<T>().ToListAsync();
-                            return Ok(set);
-                        }
-                        else
-                        {
-                            var set = await _db.Set<T>().WhereDateIs(createdAt).ToListAsync();
-                            return Ok(set);
-                        }
-                        
-                    }
-                    else
-                    {
-                        var set = _db.Set<T>().SelectOnly(fields);
-                        return Ok(set);
-                    }
+                    return Unauthorized($"Pagination non valide. Valeur max : {pagination}.");
                 }
-                else
-                {
-                    try
-                    {
-                        IOrderedQueryable<T> oq = null;
-                        var tab = sort.Split(',');
-                        string sortProp = typeof(T).GetProperty(tab[0], BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Name;
-                        oq = _db.Set<T>().OrderBy(sortProp);
-                        foreach (var item in tab.Skip(1))
-                        {
-                            string thenProp = typeof(T).GetProperty(item, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Name;
-                            oq = oq.ThenBy(thenProp);
-                        }
-                        return Ok(oq);
-                    }
-                    catch (Exception e)
-                    {
-                        return BadRequest(e.Message);
-                    }
-                }
+
+                int total = query.Count();
+                query = query.Range(Convert.ToInt32(myRange[0]), Convert.ToInt32(myRange[1]) + 1);
+
+                string url = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+
+                string links = $"<{url}?range=0-{count}>; rel=\"first\", " +
+                    $"<{url}?range={(start - count < 0 ? 0 : start - count)}-{(start - count < 0 ? 0 : start - count) + count}>; rel=\"prev\", " +
+                    $"<{url}?range={end + 1}-{(end + count > total ? total : end + count)}>; rel=\"next\", " +
+                    $"<{url}?range={total - count + 1}-{total}>; rel=\"last\"";
+
+                Response.Headers.Add("Accept-Range", pagination.ToString());
+                Response.Headers.Add("Content-Range", $"{start}-{end}/{total}");
+                Response.Headers.Add("Link", links);
             }
-
-            try { pagination = this.GetType().GetCustomAttribute<MaxPaginationAttribute>().Range; } catch (NullReferenceException) { pagination = typeof(ControllerRef<C, T, K>).GetCustomAttribute<MaxPaginationAttribute>().Range; }
-
-            var myRange = range.Split("-");
-
-            IQueryable<T> query = _db.Set<T>().AsQueryable<T>();
-            query = query.Where(x => x.deletedAt == null);
-
-            int start = Convert.ToInt32(myRange[0]);
-            int end = Convert.ToInt32(myRange[1]);
-            int count = end - start;
-
-            if (count > pagination)
-            {
-                return Unauthorized($"Pagination non valide. Valeur max : {pagination}.");
-            }
-
-            int total = query.Count();
-            query = query.Range(Convert.ToInt32(myRange[0]), Convert.ToInt32(myRange[1]) + 1);
-
-            string url = $"{Request.Scheme}://{Request.Host}{Request.Path}";
-
-            string links = $"<{url}?range=0-{count}>; rel=\"first\", " +
-                $"<{url}?range={(start - count < 0 ? 0 : start - count)}-{(start - count < 0 ? 0 : start - count) + count}>; rel=\"prev\", " +
-                $"<{url}?range={end + 1}-{(end + count > total ? total : end + count)}>; rel=\"next\", " +
-                $"<{url}?range={total - count + 1}-{total}>; rel=\"last\"";
-
-            Response.Headers.Add("Accept-Range", pagination.ToString());
-            Response.Headers.Add("Content-Range", $"{start}-{end}/{total}");
-            Response.Headers.Add("Link", links);
-
-            var displayed = await query.ToListAsync();
 
             if (sort != null)
             {
                 try
                 {
-                    IOrderedQueryable<T> oq = null;
                     var tab = sort.Split(',');
                     string sortProp = typeof(T).GetProperty(tab[0], BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Name;
-                    oq = _db.Set<T>().OrderBy(sortProp);
+                    IOrderedQueryable<T> oq = query.OrderBy(sortProp);
                     foreach (var item in tab.Skip(1))
                     {
                         string thenProp = typeof(T).GetProperty(item, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Name;
                         oq = oq.ThenBy(thenProp);
                     }
-                    return Partial(oq);
-                }
-                catch (Exception e)
+
+                    query = oq;
+                } catch(Exception e)
                 {
                     return BadRequest(e.Message);
                 }
             }
-            if (fields != null)
-            {
-                var set = query.SelectOnly(fields);
-                return Partial(set);
-            }
 
-            return Partial(displayed);
+            // --- LE TRI DE PIERRE VIENT ICI --- //
+
+
+            if (fields != null)
+                query = (IQueryable<T>)query.SelectOnly(fields);
+
+
+
+            // CONDITIONS POUR LE RETOUR
+
+            if (range != null)
+                return Partial(query);
+
+            return Ok(query);
         }
 
         [Route("{id}")]

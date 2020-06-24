@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -77,64 +78,126 @@ namespace ApiLibrary.Core.Extensions
 
         // WHERE
 
-        public static IQueryable<T> WhereDateIsLessOrEqual<T>(this IQueryable<T> source, string field, string date)
+        public static IQueryable<T> WhereFieldIsLessOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
-            var property = Expression.Property(parameter, field);
+            var property = Expression.Property(parameter, fieldName);
 
-            DateTime myDate = DateTime.Parse(date);
-            var exp = Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), typeof(DateTime)));
+            DateTime myDate = DateTime.Parse(value);
+            var exp = Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), type));
 
             var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
 
             return source.Where(lambda);
         }
 
-        public static IQueryable<T> WhereDateIsGreaterOrEqual<T>(this IQueryable<T> source, string field, string date)
+        public static IQueryable<T> WhereFieldIsGreaterOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
-            var property = Expression.Property(parameter, field);
+            var property = Expression.Property(parameter, fieldName);
+            BinaryExpression exp;
 
-            DateTime myDate = DateTime.Parse(date);
-            var exp = Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), typeof(DateTime)));
-
-            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
-
-            return source.Where(lambda);
-        }
-
-        public static IQueryable<T> WhereDateIsBetween<T>(this IQueryable<T> source, string field, string date)
-        {
-            var parameter = Expression.Parameter(typeof(T), "x");
-            var property = Expression.Property(parameter, field);
-
-            DateTime myDate = DateTime.Parse(date);
-            var exp = Expression.And(
-                Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), typeof(DateTime))), 
-                Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), typeof(DateTime))));
-
-            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
-
-            return source.Where(lambda);
-        }
-
-        public static IQueryable<T> WhereDateIs<T>(this IQueryable<T> source, string date)
-        {
-            if (date.StartsWith("[,"))
+            if(type == typeof(DateTime))
             {
-                date = new string(date.Skip(2).SkipLast(1).ToArray());
-                return source.WhereDateIsLessOrEqual("createdAt", date);
-
+                DateTime myDate = DateTime.Parse(value);
+                exp = Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), type));
             }
-            else if (date.EndsWith(",]"))
+            else
             {
-                date = new string(date.Skip(2).SkipLast(1).ToArray());
-                return source.WhereDateIsGreaterOrEqual("createdAt", date);
+                exp = Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(value), type));
             }
 
-            date = new string(date.Skip(1).SkipLast(1).ToArray());
-            var tab = date.Split(',');
-            return source.WhereDateIsBetween("createdAt", date);
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+
+        public static IQueryable<T> WhereFieldIsBetween<T>(this IQueryable<T> source, string fieldName, string value, Type type)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+            BinaryExpression exp;
+
+            var tab = value.Split(',');
+
+            if(type == typeof(DateTime))
+            {
+                DateTime startDate = DateTime.Parse(tab[0]);
+                DateTime endDate = DateTime.Parse(tab[1]);
+
+                exp = Expression.And(
+                    Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(startDate), type)),
+                    Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(endDate), type))
+                );
+            }
+            else
+            {
+
+                exp = Expression.And(
+                    Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(tab[0]), type)),
+                    Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(tab[1]), type))
+                );
+            }
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+
+        public static IQueryable<T> WhereFieldExact<T>(this IQueryable<T> source, string fieldName, string value, Type type)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+            BinaryExpression exp;
+
+            if(type == typeof(DateTime))
+            {
+                DateTime startDate = DateTime.Parse(value);
+                DateTime endDate = startDate.AddDays(1);
+
+                exp = Expression.And(
+                    Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(startDate), type)),
+                    Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(endDate), type))
+                );
+            }
+            else
+            {
+                exp = Expression.Equal(property, Expression.Convert(Expression.Constant(value), type));
+            }
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+
+        /**
+         * source : Requête d'origine
+         * value : Valeur du champ
+         * type : Type de l'argument (int, DateTime, etc...)
+         * fieldName : Nom du champ à trier
+         */
+        public static IQueryable<T> WhereFieldIs<T>(this IQueryable<T> source, string value, Type type, string fieldName)
+        {
+            if (value.StartsWith("[,"))
+            {
+                value = new string(value.Skip(2).SkipLast(1).ToArray());
+                return source.WhereFieldIsLessOrEqual(fieldName, value, type);
+            }
+            else if (value.EndsWith(",]"))
+            {
+                value = new string(value.Skip(2).SkipLast(1).ToArray());
+                return source.WhereFieldIsGreaterOrEqual(fieldName, value, type);
+            }
+            else if(value.StartsWith('[') && value.EndsWith(']'))
+            {
+                value = new string(value.Skip(1).SkipLast(1).ToArray());
+                return source.WhereFieldIsBetween(fieldName, value, type);
+            }
+
+            return source.WhereFieldExact(fieldName, value, type);
+
+           
             
         }
     }
