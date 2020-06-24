@@ -12,6 +12,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
+using ApiLibrary.Core.Utils;
 
 namespace ApiLibrary.Core.Controllers
 {
@@ -101,7 +103,64 @@ namespace ApiLibrary.Core.Controllers
             }
 
             // --- LE TRI DE PIERRE VIENT ICI --- //
+            var queryRequest = this.Request.Query;
+            // on récupère toutes les proprietés publique de l'objet afin de pouvoir les comparé aux params du header
+            foreach (string paramName in queryRequest.Keys)
+            {
+                try
+                {
+                    PropertyInfo Tproperties = typeof(T).GetProperty(paramName, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
+                    if (Tproperties == null)
+                    {
+                        throw new Exception();
+                    }
+                    var paramValue = queryRequest[Tproperties.Name].ToString();
+                    if (paramValue.StartsWith("[") && paramValue.EndsWith("]"))
+                    {
+                        Regex pattern = new Regex(@"\[([0-9-]*),([0-9-]*)\]");
+                        MatchCollection matches = pattern.Matches(paramValue);
 
+                        if (matches.Count() == 1)
+                        {
+                            string borneStart = matches[0].Groups[1].Value;
+                            string borneEnd = matches[0].Groups[2].Value;
+                            if (!TreatParams.CanConvert(borneStart, Tproperties.PropertyType) || !TreatParams.CanConvert(borneEnd, Tproperties.PropertyType))
+                            {
+                                throw new Exception();
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                    }
+                    else
+                    {
+                        Regex pattern = new Regex(@"\[|\]");
+                        Match match = pattern.Match(paramValue);
+                        if (match.Success)
+                        {
+                            throw new Exception();
+                        }
+
+                        string[] allInstruction = paramValue.Split(",");
+
+                        foreach (string instruction in allInstruction)
+                        {
+                            if (!TreatParams.CanConvert(instruction, Tproperties.PropertyType))
+                            {
+                                throw new Exception();
+                            }
+                        }
+
+                    }
+                    query.WhereFieldIs(paramValue, Tproperties.PropertyType, Tproperties.Name);
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+            }
 
             if (fields != null)
             {
