@@ -154,7 +154,7 @@ namespace ApiLibrary.Core.Controllers
                         }
 
                     }
-                    query.WhereFieldIs(paramValue, Tproperties.PropertyType, Tproperties.Name);
+                    query = query.WhereFieldIs(paramValue, Tproperties.PropertyType, Tproperties.Name);
                 }
                 catch (Exception e)
                 {

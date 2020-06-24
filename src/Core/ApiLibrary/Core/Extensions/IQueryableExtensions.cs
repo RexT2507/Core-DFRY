@@ -163,7 +163,8 @@ namespace ApiLibrary.Core.Extensions
             }
             else
             {
-                exp = Expression.Equal(property, Expression.Convert(Expression.Constant(value), type));
+                var convertedValue = Convert.ChangeType(value, type);
+                exp = Expression.Equal(property, Expression.Convert(Expression.Constant(convertedValue), type));
             }
 
             var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
