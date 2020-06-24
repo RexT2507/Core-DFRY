@@ -174,13 +174,36 @@ namespace ApiLibrary.Core.Extensions
 
             if(type == typeof(DateTime))
             {
-                DateTime startDate = DateTime.Parse(value);
-                DateTime endDate = startDate.AddDays(1);
+                if(value.Contains(','))
+                {
+                    var tab = value.Split(',');
+                    foreach (var item in tab)
+                    {
+                        var convertedItem = Convert.ChangeType(item, type);
 
-                exp = Expression.And(
-                    Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(startDate), type)),
-                    Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(endDate), type))
-                );
+                        var startDate = DateTime.Parse(item);
+                        var endDate = startDate.AddDays(1);
+
+                        BinaryExpression tempExp = Expression.And(
+                            Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(startDate), type)),
+                            Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(endDate), type))
+                        );
+                        if (exp == null)
+                            exp = tempExp;
+                        else
+                            exp = Expression.Or(exp, tempExp);
+                    }
+                }
+                else
+                {
+                    DateTime startDate = DateTime.Parse(value);
+                    DateTime endDate = startDate.AddDays(1);
+
+                    exp = Expression.And(
+                        Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(startDate), type)),
+                        Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(endDate), type))
+                    );
+                }
             }
             else
             {
