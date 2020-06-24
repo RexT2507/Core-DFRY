@@ -133,10 +133,12 @@ namespace ApiLibrary.Core.Extensions
             }
             else
             {
+                var convertedValueStart = Convert.ChangeType(tab[0], type);
+                var convertedValueEnd = Convert.ChangeType(tab[1], type);
 
                 exp = Expression.And(
-                    Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(tab[0]), type)),
-                    Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(tab[1]), type))
+                    Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(convertedValueStart), type)),
+                    Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(convertedValueEnd), type))
                 );
             }
 
@@ -187,7 +189,7 @@ namespace ApiLibrary.Core.Extensions
             }
             else if (value.EndsWith(",]"))
             {
-                value = new string(value.Skip(2).SkipLast(1).ToArray());
+                value = new string(value.Skip(1).SkipLast(2).ToArray());
                 return source.WhereFieldIsGreaterOrEqual(fieldName, value, type);
             }
             else if(value.StartsWith('[') && value.EndsWith(']'))
