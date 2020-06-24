@@ -119,7 +119,7 @@ namespace ApiLibrary.Core.Controllers
                         var paramValue = queryRequest[Tproperties.Name].ToString();
                         if (paramValue.StartsWith("[") && paramValue.EndsWith("]"))
                         {
-                            Regex pattern = new Regex(@"\[([0-9-]*),([0-9-]*)\]");
+                            Regex pattern = new Regex(@"\[([0-9-.]*),([0-9-.]*)\]");
                             MatchCollection matches = pattern.Matches(paramValue);
 
                             if (matches.Count() == 1)

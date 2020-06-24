@@ -82,9 +82,17 @@ namespace ApiLibrary.Core.Extensions
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
+            BinaryExpression exp;
 
-            DateTime myDate = DateTime.Parse(value);
-            var exp = Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), type));
+            if (type == typeof(DateTime))
+            {
+                DateTime myDate = DateTime.Parse(value);
+                exp = Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(myDate), type));
+            }
+            else
+            {
+                exp = Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(value), type));
+            }
 
             var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
 
@@ -133,6 +141,11 @@ namespace ApiLibrary.Core.Extensions
             }
             else
             {
+                if (tab[0].Contains('.'))
+                    tab[0] = tab[0].Replace('.', ',');
+                if (tab[1].Contains('.'))
+                    tab[1] = tab[1].Replace('.', ',');
+
                 var convertedValueStart = Convert.ChangeType(tab[0], type);
                 var convertedValueEnd = Convert.ChangeType(tab[1], type);
 
