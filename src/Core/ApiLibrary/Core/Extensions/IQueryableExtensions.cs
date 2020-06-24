@@ -170,7 +170,7 @@ namespace ApiLibrary.Core.Extensions
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
-            BinaryExpression exp;
+            Expression exp = null;
 
             if(type == typeof(DateTime))
             {
@@ -184,8 +184,31 @@ namespace ApiLibrary.Core.Extensions
             }
             else
             {
-                var convertedValue = Convert.ChangeType(value, type);
-                exp = Expression.Equal(property, Expression.Convert(Expression.Constant(convertedValue), type));
+                if(value.Contains(','))
+                {
+                    var tab = value.Split(',');
+
+                    for(var i=0; i<tab.Length; i++)
+                    {
+                        if (tab[i].Contains('.'))
+                            tab[i] = tab[i].Replace('.', ',');
+                    }
+
+                    foreach(var item in tab)
+                    {
+                        var convertedItem = Convert.ChangeType(item, type);
+                        BinaryExpression tempExp = Expression.Equal(property, Expression.Convert(Expression.Constant(convertedItem), type));
+                        if(exp == null)
+                            exp = tempExp;
+                        else
+                            exp = Expression.Or(exp, tempExp);
+                    }
+                }
+                else
+                {
+                    var convertedValue = Convert.ChangeType(value, type);
+                    exp = Expression.Equal(property, Expression.Convert(Expression.Constant(convertedValue), type));
+                }
             }
 
             var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
