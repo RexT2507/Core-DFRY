@@ -91,7 +91,10 @@ namespace ApiLibrary.Core.Extensions
             }
             else
             {
-                exp = Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(value), type));
+                if (value.Contains('.'))
+                    value = value.Replace('.', ',');
+                var convertedValue = Convert.ChangeType(value, type);
+                exp = Expression.LessThanOrEqual(property, Expression.Convert(Expression.Constant(convertedValue), type));
             }
 
             var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
@@ -112,7 +115,10 @@ namespace ApiLibrary.Core.Extensions
             }
             else
             {
-                exp = Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(value), type));
+                if (value.Contains('.'))
+                    value = value.Replace('.', ',');
+                var convertedValue = Convert.ChangeType(value, type);
+                exp = Expression.GreaterThanOrEqual(property, Expression.Convert(Expression.Constant(convertedValue), type));
             }
 
 
