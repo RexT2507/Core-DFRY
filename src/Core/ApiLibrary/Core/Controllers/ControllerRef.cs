@@ -126,7 +126,7 @@ namespace ApiLibrary.Core.Controllers
                             {
                                 string borneStart = matches[0].Groups[1].Value;
                                 string borneEnd = matches[0].Groups[2].Value;
-                                if (!TreatParams.CanConvert(borneStart, Tproperties.PropertyType) || !TreatParams.CanConvert(borneEnd, Tproperties.PropertyType))
+                                if (borneStart != "" && borneEnd != "" && (!TreatParams.CanConvert(borneStart, Tproperties.PropertyType) || !TreatParams.CanConvert(borneEnd, Tproperties.PropertyType)))
                                 {
                                     throw new Exception();
                                 }
