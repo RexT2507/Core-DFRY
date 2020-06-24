@@ -104,7 +104,12 @@ namespace ApiLibrary.Core.Controllers
 
 
             if (fields != null)
-                query = (IQueryable<T>)query.SelectOnly(fields);
+            {
+                IEnumerable<dynamic> ts = query.SelectOnly(fields);
+                if (range != null)
+                    return Partial(ts);
+                return Ok(ts);
+            }
 
 
 
