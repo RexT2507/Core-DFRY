@@ -15,37 +15,37 @@ namespace Cocktails.Tests
         public async Task TestGetCocktailsAsync()
         {
             var dbContext = DbContextMocker.GetCocktailsDbContext(nameof(TestGetCocktailsAsync));
-            var controller = new CocktailsController(null, dbContext);
+            var controller = new CocktailController(null, dbContext);
 
-            /*var response = await controller.GetCocktailsAsync() as ObjectResult;*/
-            /*var value = response.Value as IPagedResponse<Cocktail>;*/
+            var response = await controller.GetElements(null, null, null);
+            var value = response.Value as IPagedResponse<Cocktail>;
 
             dbContext.Dispose();
 
-            /*Assert.False(value.DidError);*/
+            Assert.False(value.DidError);
         }
 
         [Fact]
         public async Task TestGetCocktailAsync()
         {
             var dbContext = DbContextMocker.GetCocktailsDbContext(nameof(TestGetCocktailAsync));
-            var controller = new CocktailsController(null, dbContext);
+            var controller = new CocktailController(null, dbContext);
             var id = 1;
 
-            /*var response = await controller.GetCocktailAsync(id) as ObjectResult;
-            var value = response.Value as ISingleResponse<Cocktail>;*/
+            var response = await controller.GetElementById(id);
+            var value = response.Value as ISingleResponse<Cocktail>;
 
             dbContext.Dispose();
 
-            /*Assert.False(value.DidError);*/
+            Assert.False(value.DidError);
         }
 
         [Fact]
         public async Task TestPostCocktailAsync()
         {
             var dbContext = DbContextMocker.GetCocktailsDbContext(nameof(TestPostCocktailAsync));
-            var controller = new CocktailsController(null, dbContext);
-            /*var request = new PostCocktailAsync
+            var controller = new CocktailController(null, dbContext);
+            var request = new Cocktail
             {
                 ID = 5,
                 Nom = "CocoLoco",
@@ -54,21 +54,21 @@ namespace Cocktails.Tests
                 Rating = 69
             };
 
-            var response = await controller.PostCocktailAsync(request) as ObjectResult;
-            var value = response.Value as ISingleResponse<Cocktail>;*/
+            var response = await controller.CreateElement(request) as ObjectResult;
+            var value = response.Value as ISingleResponse<Cocktail>;
 
             dbContext.Dispose();
 
-            /*Assert.False(value.DidError);*/
+            Assert.False(value.DidError);
         }
 
         [Fact]
         public async Task TestPutCocktailAsync()
         {
             var dbContext = DbContextMocker.GetCocktailsDbContext(nameof(TestPutCocktailAsync));
-            var controller = new CocktailsController(null, dbContext);
+            var controller = new CocktailController(null, dbContext);
             var id = 12;
-            /*var request = new PutCocktailAsync
+            var request = new Cocktail
             {
                 ID = 5,
                 Nom = "CocoLoco",
@@ -77,27 +77,27 @@ namespace Cocktails.Tests
                 Rating = 42
             };
 
-            var response = await controller.PutCocktailAsync(id, request) as ObjectResult;
-            var value = response.Value as IResponses;*/
+            var response = await controller.UpdateElement(id, request) as ObjectResult;
+            var value = response.Value as IResponses;
 
             dbContext.Dispose();
 
-            /*Assert.False(value.DidError);*/
+            Assert.False(value.DidError);
         }
 
         [Fact]
         public async Task TestDeleteCocktailAsync()
         {
             var dbContext = DbContextMocker.GetCocktailsDbContext(nameof(TestDeleteCocktailAsync));
-            var controller = new CocktailsController(null, dbContext);
+            var controller = new CocktailController(null, dbContext);
             var id = 5;
 
-            /*var response = await controller.DeleteCocktailAsync(id) as ObjectResult;
-            var value = response.Value as IResponses;*/
+            var response = await controller.DeleteElement(id) as ObjectResult;
+            var value = response.Value as IResponses;
 
             dbContext.Dispose();
 
-            /*Assert.False(value.DidError);*/
+            Assert.False(value.DidError);
         }
     }
 }

@@ -2,6 +2,8 @@
 using ApiLibrary.Core.Controllers;
 using Cocktails.API.Data;
 using Cocktails.API.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,14 @@ namespace Cocktails.API.Controllers
 {
     public class CocktailController : ControllerRef<CocktailsDbContext,Cocktail,int>
     {
-        public CocktailController(CocktailsDbContext context): base(context) { }
+        protected readonly ILogger Logger;
+        protected readonly CocktailsDbContext DbContext;
+
+        public CocktailController(ILogger<CocktailController> logger, CocktailsDbContext context) : base(context)
+        {
+            Logger = logger;
+            DbContext = context;
+        }
 
     }
 }

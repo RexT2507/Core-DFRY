@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using ApiLibrary.Core.Utils;
+using System.Collections.Specialized;
 
 namespace ApiLibrary.Core.Controllers
 {
@@ -41,20 +42,12 @@ namespace ApiLibrary.Core.Controllers
             _db = db;
         }
 
-        // --- GET --- //
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields, IQueryable<T> Requete = null)
+        // Methods générique
+        private async Task<ActionResult<IEnumerable<T>>> AddFilter(IQueryable<T> query, string range, string sort, string fields)
         {
             int pagination;
 
-            IQueryable<T> query = (Requete != null ? Requete : _db.Set<T>().AsQueryable<T>());
-
-            //var query = await Search();
-            //if (query == null)
-            //    query = _db.Set<T>().AsQueryable<T>();
-
-            if(range != null)
+            if (range != null)
             {
                 try { pagination = this.GetType().GetCustomAttribute<MaxPaginationAttribute>().Range; } catch (NullReferenceException) { pagination = typeof(ControllerRef<C, T, K>).GetCustomAttribute<MaxPaginationAttribute>().Range; }
 
@@ -100,7 +93,8 @@ namespace ApiLibrary.Core.Controllers
                     }
 
                     query = oq;
-                } catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     return BadRequest(e.Message);
                 }
@@ -110,7 +104,7 @@ namespace ApiLibrary.Core.Controllers
             // on récupère toutes les proprietés publique de l'objet afin de pouvoir les comparé aux params du header
             foreach (string paramName in queryRequest.Keys)
             {
-                if(paramName != "range" && paramName != "sort" && paramName != "fields")
+                if (paramName != "range" && paramName != "sort" && paramName != "fields")
                 {
                     try
                     {
@@ -186,29 +180,50 @@ namespace ApiLibrary.Core.Controllers
             return Ok(await query.ToListAsync());
         }
 
+
+        // --- GET --- //
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields)
+        {
+            return await AddFilter(_db.Set<T>().AsQueryable<T>(), range, sort, fields);
+        }
+
         [Route("search")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<T>>> Recherche([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields)
         {
             IQueryable<T> query = _db.Set<T>().AsQueryable<T>();
 
-            string FieldName = this.Request.Query.Keys.First();
+            string fieldName = this.Request.Query.Keys.First();
             try
             {
-                PropertyInfo Tproperties = typeof(T).GetProperty(FieldName, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
+                PropertyInfo Tproperties = typeof(T).GetProperty(fieldName, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
                 if (Tproperties == null || Tproperties.PropertyType != typeof(string))
                 {
                     throw new Exception();
                 }
                 string RechercheValue = this.Request.Query[Tproperties.Name].ToString();
                 query = query.WhereSearchOnField(Tproperties.Name, RechercheValue);
+
+                Dictionary<String, Microsoft.Extensions.Primitives.StringValues> paramsTempo = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>();
+                foreach (string paramName in this.Request.Query.Keys)
+                {
+                    if (paramName != fieldName)
+                    {
+                        paramsTempo.Add(paramName, this.Request.Query[paramName]);
+                    }
+                }
+
+                this.Request.Query = new Microsoft.AspNetCore.Http.QueryCollection(paramsTempo);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-
-            return await GetElements(range, sort, fields, query);
+            var kek2 = this.Request.Query;
+            return Ok(query);
+            //return await AddFilter(query, range, sort, fields);
         }
 
         [Route("{id}")]
