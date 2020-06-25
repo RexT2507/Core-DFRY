@@ -78,7 +78,7 @@ namespace ApiLibrary.Core.Extensions
 
         // WHERE
 
-        public static IQueryable<T> WhereSearchOnStartField<T>(this IQueryable<T> source, string fieldName, string value)
+        private static IQueryable<T> WhereSearchOnStartField<T>(this IQueryable<T> source, string fieldName, string value)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
@@ -90,19 +90,19 @@ namespace ApiLibrary.Core.Extensions
             return source.Where(lambda);
         }
         
-        public static IQueryable<T> WhereSearchOnEndField<T>(this IQueryable<T> source, string fieldName, string value)
+        private static IQueryable<T> WhereSearchOnEndField<T>(this IQueryable<T> source, string fieldName, string value)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
 
-            Expression exp = Expression.Call(property, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
+            Expression exp = Expression.Call(property, typeof(string).GetMethod("EndsWith", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
 
             var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
 
             return source.Where(lambda);
         }
 
-        public static IQueryable<T> WhereSearchOnAllField<T>(this IQueryable<T> source, string fieldName, string value)
+        private static IQueryable<T> WhereSearchOnAllField<T>(this IQueryable<T> source, string fieldName, string value)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, fieldName);
@@ -327,7 +327,7 @@ namespace ApiLibrary.Core.Extensions
             
         }
 
-        // SEARCH
+        // SEARCH - Test de Doryan, à ne pas prendre en compte
 
         //public static IQueryable<T> Like<T>(this IQueryable<T> source, string fieldName, string value)
         //{
