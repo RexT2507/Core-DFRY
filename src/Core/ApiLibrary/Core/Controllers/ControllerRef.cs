@@ -44,11 +44,11 @@ namespace ApiLibrary.Core.Controllers
         // --- GET --- //
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields)
+        public async Task<ActionResult<IEnumerable<T>>> GetElements([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields, IQueryable<T> Requete = null)
         {
             int pagination;
 
-            var query = _db.Set<T>().AsQueryable<T>();
+            IQueryable<T> query = (Requete != null ? Requete : _db.Set<T>().AsQueryable<T>());
 
             if(range != null)
             {
@@ -102,7 +102,6 @@ namespace ApiLibrary.Core.Controllers
                 }
             }
 
-            // --- LE TRI DE PIERRE VIENT ICI --- //
             var queryRequest = this.Request.Query;
             // on récupère toutes les proprietés publique de l'objet afin de pouvoir les comparé aux params du header
             foreach (string paramName in queryRequest.Keys)
@@ -181,6 +180,34 @@ namespace ApiLibrary.Core.Controllers
                 return Partial(query);
 
             return Ok(query);
+        }
+
+        [Route("search")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<T>>> Recherche([FromQuery] string range, [FromQuery] string sort, [FromQuery] string fields)
+        {
+            IQueryable<T> query = _db.Set<T>().AsQueryable<T>();
+
+            string FieldName = this.Request.Query.Keys.First();
+            try
+            {
+                PropertyInfo Tproperties = typeof(T).GetProperty(FieldName, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
+                if (Tproperties == null || Tproperties.PropertyType != typeof(string))
+                {
+                    throw new Exception();
+                }
+                string RechercheValue = this.Request.Query[Tproperties.Name].ToString();
+                query = query.WhereSearchOnField(Tproperties.Name, RechercheValue);
+                var list = this.Request.Query.SelectMany(x => x.Value, (col, value) => new KeyValuePair<string, string>(col.Key, value)).ToList();
+                list.RemoveAll(x => x.Key == FieldName);
+                this.Request.Query = list.AsQueryable<T>();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return await GetElements(range, sort, fields, query);
         }
 
         [Route("{id}")]
