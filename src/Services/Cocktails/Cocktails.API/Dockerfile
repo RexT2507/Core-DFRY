@@ -9,11 +9,14 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1809 AS build
-WORKDIR /src
-COPY ["src/Services/Cocktails/Cocktails.API/Cocktails.API.csproj", "src/Services/Cocktails/Cocktails.API/"]
+WORKDIR /core-dfry
+COPY "Core-DFRY.sln" "Core-DFRY.sln"
+WORKDIR /core-dfry/src
+COPY "Core/ApiLibrary" "Core/ApiLibrary/"
+COPY "Services/Cocktails/Cocktails.API" "Services/Cocktails/Cocktails.API/"
 RUN dotnet restore "src/Services/Cocktails/Cocktails.API/Cocktails.API.csproj"
 COPY . .
-WORKDIR "/src/src/Services/Cocktails/Cocktails.API"
+WORKDIR "/core-dfry/src/Services/Cocktails/Cocktails.API"
 RUN dotnet build "Cocktails.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

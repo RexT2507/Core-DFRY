@@ -78,6 +78,64 @@ namespace ApiLibrary.Core.Extensions
 
         // WHERE
 
+        private static IQueryable<T> WhereSearchOnStartField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+
+            Expression exp = Expression.Call(property, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+        
+        private static IQueryable<T> WhereSearchOnEndField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+
+            Expression exp = Expression.Call(property, typeof(string).GetMethod("EndsWith", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+
+        private static IQueryable<T> WhereSearchOnAllField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+
+            Expression exp = Expression.Call(property, typeof(string).GetMethod("Contains", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+
+        public static IQueryable<T> WhereSearchOnField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+            if (value.StartsWith('*') && value.EndsWith('*'))
+            {
+                value = new string(value.Skip(1).SkipLast(1).ToArray());
+                return source.WhereSearchOnAllField(fieldName, value);
+            }
+            else if (value.EndsWith("*"))
+            {
+                value = new string(value.Skip(1).SkipLast(2).ToArray());
+                return source.WhereSearchOnStartField(fieldName, value);
+            }
+            else if (value.StartsWith("*"))
+            {
+                value = new string(value.Skip(2).SkipLast(1).ToArray());
+                return source.WhereSearchOnEndField(fieldName, value);
+            }
+
+            return source.WhereFieldExact(fieldName, value, typeof(string));
+
+        }
+
         private static IQueryable<T> WhereFieldIsLessOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
@@ -268,5 +326,22 @@ namespace ApiLibrary.Core.Extensions
            
             
         }
+
+        // SEARCH - Test de Doryan, à ne pas prendre en compte
+
+        //public static IQueryable<T> Like<T>(this IQueryable<T> source, string fieldName, string value)
+        //{
+        //    MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+        //    var parameter = Expression.Parameter(typeof(T), "x");
+
+        //    var property = Expression.Property(parameter, fieldName);
+        //    var myVal = Expression.Constant(value, typeof(string));
+
+        //    var exp = Expression.Call(property, method, myVal);
+
+        //    var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+        //    return source.Where(lambda);
+        //}
     }
 }
