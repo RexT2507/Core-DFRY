@@ -202,9 +202,6 @@ namespace ApiLibrary.Core.Controllers
                 }
                 string RechercheValue = this.Request.Query[Tproperties.Name].ToString();
                 query = query.WhereSearchOnField(Tproperties.Name, RechercheValue);
-                var list = this.Request.Query.SelectMany(x => x.Value, (col, value) => new KeyValuePair<string, string>(col.Key, value)).ToList();
-                list.RemoveAll(x => x.Key == FieldName);
-                this.Request.Query = list.AsQueryable<T>();
             }
             catch(Exception e)
             {
