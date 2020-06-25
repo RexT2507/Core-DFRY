@@ -74,7 +74,7 @@ namespace Cocktails.Tests
                 Nom = "CocoLoco",
                 Origine = "",
                 Alcool = true,
-                Rating = 666
+                Rating = 42
             };
 
             var response = await controller.PutCocktailAsync(id, request) as ObjectResult;
