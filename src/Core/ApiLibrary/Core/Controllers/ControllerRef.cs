@@ -221,9 +221,8 @@ namespace ApiLibrary.Core.Controllers
             {
                 return BadRequest(e.Message);
             }
-            var kek2 = this.Request.Query;
-            return Ok(query);
-            //return await AddFilter(query, range, sort, fields);
+
+            return await AddFilter(query, range, sort, fields);
         }
 
         [Route("{id}")]
