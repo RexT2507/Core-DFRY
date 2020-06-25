@@ -9,11 +9,14 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1809 AS build
-WORKDIR /src
-COPY ["src/Services/Auth/Auth.API/Auth.API.csproj", "src/Services/Auth/Auth.API/"]
+WORKDIR /core-dfry
+COPY "Core-DFRY.sln" "Core-DFRY.sln"
+WORKDIR /core-dfry/src
+COPY "Core/ApiLibrary" "/Core/ApiLibrary/"
+COPY "Services/Auth/Auth.API" "Services/Auth/Auth.API/"
 RUN dotnet restore "src/Services/Auth/Auth.API/Auth.API.csproj"
 COPY . .
-WORKDIR "/src/src/Services/Auth/Auth.API"
+WORKDIR "/core-dfry/src/Services/Auth/Auth.API"
 RUN dotnet build "Auth.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

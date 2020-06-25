@@ -50,6 +50,10 @@ namespace ApiLibrary.Core.Controllers
 
             var query = _db.Set<T>().AsQueryable<T>();
 
+            //var query = await Search();
+            //if (query == null)
+            //    query = _db.Set<T>().AsQueryable<T>();
+
             if(range != null)
             {
                 try { pagination = this.GetType().GetCustomAttribute<MaxPaginationAttribute>().Range; } catch (NullReferenceException) { pagination = typeof(ControllerRef<C, T, K>).GetCustomAttribute<MaxPaginationAttribute>().Range; }

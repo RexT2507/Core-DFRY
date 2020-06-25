@@ -268,5 +268,22 @@ namespace ApiLibrary.Core.Extensions
            
             
         }
+
+        // SEARCH
+
+        //public static IQueryable<T> Like<T>(this IQueryable<T> source, string fieldName, string value)
+        //{
+        //    MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+        //    var parameter = Expression.Parameter(typeof(T), "x");
+
+        //    var property = Expression.Property(parameter, fieldName);
+        //    var myVal = Expression.Constant(value, typeof(string));
+
+        //    var exp = Expression.Call(property, method, myVal);
+
+        //    var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+        //    return source.Where(lambda);
+        //}
     }
 }
