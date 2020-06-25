@@ -12,11 +12,11 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1809 AS build
 WORKDIR /core-dfry
 COPY "Core-DFRY.sln" "Core-DFRY.sln"
 WORKDIR /core-dfry/src
-COPY "Core/ApiLibrary" "Core/ApiLibrary/"
-COPY "Services/Orders/Orders.API" "Services/Orders/Orders.API/"
-RUN dotnet restore "src/Services/Orders/Orders.API/Orders.API.csproj"
+COPY "src/Core/ApiLibrary" "Core/ApiLibrary/"
+COPY "src/Services/Orders/Orders.API" "Services/Orders/Orders.API/"
+RUN dotnet restore "Services/Orders/Orders.API/Cocktails.API.csproj"
 COPY . .
-WORKDIR "/core-dfry/src/Services/Cocktails/Cocktails.API"
+WORKDIR "/core-dfry/src/Orders/Orders/Orders.API"
 RUN dotnet build "Orders.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
