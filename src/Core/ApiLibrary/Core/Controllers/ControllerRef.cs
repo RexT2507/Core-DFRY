@@ -104,7 +104,7 @@ namespace ApiLibrary.Core.Controllers
             // on récupère toutes les proprietés publique de l'objet afin de pouvoir les comparé aux params du header
             foreach (string paramName in queryRequest.Keys)
             {
-                if (paramName != "range" && paramName != "sort" && paramName != "fields")
+                if (paramName.ToLower() != "range" && paramName.ToLower() != "sort" && paramName.ToLower() != "fields")
                 {
                     try
                     {
@@ -175,9 +175,9 @@ namespace ApiLibrary.Core.Controllers
             // CONDITIONS POUR LE RETOUR
 
             if (range != null)
-                return Partial(query);
+                return Partial(await query.ToListAsync());
 
-            return Ok(query);
+            return Ok(await query.ToListAsync());
         }
 
 
@@ -221,9 +221,8 @@ namespace ApiLibrary.Core.Controllers
             {
                 return BadRequest(e.Message);
             }
-            var kek2 = this.Request.Query;
-            return Ok(query);
-            //return await AddFilter(query, range, sort, fields);
+            
+            return await AddFilter(query, range, sort, fields);
         }
 
         [Route("{id}")]

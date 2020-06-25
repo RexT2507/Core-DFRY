@@ -12,11 +12,11 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1809 AS build
 WORKDIR /core-dfry
 COPY "Core-DFRY.sln" "Core-DFRY.sln"
 WORKDIR /core-dfry/src
-COPY "Core/ApiLibrary" "/Core/ApiLibrary/"
-COPY "Services/Auth/Auth.API" "Services/Auth/Auth.API/"
-RUN dotnet restore "src/Services/Auth/Auth.API/Auth.API.csproj"
+COPY "src/Core/ApiLibrary" "Core/ApiLibrary/"
+COPY "src/Services/Auth/Auth.API" "Services/Auth/Cocktails.API/"
+RUN dotnet restore "Services/Auth/Auth.API/Auth.API.csproj"
 COPY . .
-WORKDIR "/core-dfry/src/Services/Auth/Auth.API"
+WORKDIR "/core-dfry/src/Auth/Auth/Auth.API"
 RUN dotnet build "Auth.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

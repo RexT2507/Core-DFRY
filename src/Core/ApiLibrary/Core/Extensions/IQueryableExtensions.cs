@@ -123,12 +123,12 @@ namespace ApiLibrary.Core.Extensions
             }
             else if (value.EndsWith("*"))
             {
-                value = new string(value.Skip(1).SkipLast(2).ToArray());
+                value = new string(value.SkipLast(1).ToArray());
                 return source.WhereSearchOnStartField(fieldName, value);
             }
             else if (value.StartsWith("*"))
             {
-                value = new string(value.Skip(2).SkipLast(1).ToArray());
+                value = new string(value.Skip(1).ToArray());
                 return source.WhereSearchOnEndField(fieldName, value);
             }
 
