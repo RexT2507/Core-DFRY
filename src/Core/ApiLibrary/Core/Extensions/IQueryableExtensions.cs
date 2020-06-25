@@ -78,6 +78,65 @@ namespace ApiLibrary.Core.Extensions
 
         // WHERE
 
+        public static IQueryable<T> WhereSearchOnStartField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+
+            Expression exp = Expression.Call(property, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+        
+        public static IQueryable<T> WhereSearchOnEndField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+
+            Expression exp = Expression.Call(property, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+
+        public static IQueryable<T> WhereSearchOnAllField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = Expression.Property(parameter, fieldName);
+
+            Expression exp = Expression.Call(property, typeof(string).GetMethod("Contains", new[] { typeof(string) }), Expression.Constant(value, typeof(string)));
+
+            var lambda = Expression.Lambda<Func<T, bool>>(exp, parameter);
+
+            return source.Where(lambda);
+        }
+
+        public static IQueryable<T> WhereSearchOnField<T>(this IQueryable<T> source, string fieldName, string value)
+        {
+
+            if (value.StartsWith("*"))
+            {
+                value = new string(value.Skip(2).SkipLast(1).ToArray());
+                return source.WhereSearchOnEndField(fieldName, value);
+            }
+            else if (value.EndsWith("*"))
+            {
+                value = new string(value.Skip(1).SkipLast(2).ToArray());
+                return source.WhereSearchOnStartField(fieldName, value);
+            }
+            else if (value.StartsWith('*') && value.EndsWith('*'))
+            {
+                value = new string(value.Skip(1).SkipLast(1).ToArray());
+                return source.WhereSearchOnAllField(fieldName, value);
+            }
+
+            return source.WhereFieldExact(fieldName, value, typeof(string));
+
+        }
+
         private static IQueryable<T> WhereFieldIsLessOrEqual<T>(this IQueryable<T> source, string fieldName, string value, Type type)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
