@@ -175,9 +175,9 @@ namespace ApiLibrary.Core.Controllers
             // CONDITIONS POUR LE RETOUR
 
             if (range != null)
-                return Partial(query);
+                return Partial(await query.ToListAsync());
 
-            return Ok(query);
+            return Ok(await query.ToListAsync());
         }
 
 
