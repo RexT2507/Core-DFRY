@@ -205,7 +205,6 @@ namespace ApiLibrary.Core.Controllers
                 }
                 string RechercheValue = this.Request.Query[Tproperties.Name].ToString();
                 query = query.WhereSearchOnField(Tproperties.Name, RechercheValue);
-<<<<<<< HEAD
 
                 Dictionary<String, Microsoft.Extensions.Primitives.StringValues> paramsTempo = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>();
                 foreach (string paramName in this.Request.Query.Keys)
@@ -217,8 +216,6 @@ namespace ApiLibrary.Core.Controllers
                 }
 
                 this.Request.Query = new Microsoft.AspNetCore.Http.QueryCollection(paramsTempo);
-=======
->>>>>>> 2167c5544767f6c04f229b14912c93e3c2ce3409
             }
             catch (Exception e)
             {

@@ -1,5 +1,6 @@
 ﻿using ApiLibrary.Core.Base;
 using ApiLibrary.Core.Controllers;
+using Microsoft.Extensions.Logging;
 using Orders.API.Data;
 using Orders.API.Models;
 using System;
@@ -11,7 +12,14 @@ namespace Orders.API.Controllers
 {
     public class OrderController : ControllerRef<OrdersDbContext, Order,int>
     {
-        public OrderController(OrdersDbContext context): base(context) { }
+        protected readonly ILogger Logger;
+        protected readonly OrdersDbContext DbContext;
+
+        public OrderController(ILogger<OrderController> logger, OrdersDbContext context): base(context) 
+        {
+            Logger = logger;
+            DbContext = context;
+        }
 
     }
 }
