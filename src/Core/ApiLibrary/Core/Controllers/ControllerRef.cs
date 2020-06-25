@@ -104,7 +104,7 @@ namespace ApiLibrary.Core.Controllers
             // on récupère toutes les proprietés publique de l'objet afin de pouvoir les comparé aux params du header
             foreach (string paramName in queryRequest.Keys)
             {
-                if (paramName != "range" && paramName != "sort" && paramName != "fields")
+                if (paramName.ToLower() != "range" && paramName.ToLower() != "sort" && paramName.ToLower() != "fields")
                 {
                     try
                     {
@@ -221,7 +221,7 @@ namespace ApiLibrary.Core.Controllers
             {
                 return BadRequest(e.Message);
             }
-
+            
             return await AddFilter(query, range, sort, fields);
         }
 
