@@ -116,21 +116,20 @@ namespace ApiLibrary.Core.Extensions
 
         public static IQueryable<T> WhereSearchOnField<T>(this IQueryable<T> source, string fieldName, string value)
         {
-
-            if (value.StartsWith("*"))
+            if (value.StartsWith('*') && value.EndsWith('*'))
             {
-                value = new string(value.Skip(2).SkipLast(1).ToArray());
-                return source.WhereSearchOnEndField(fieldName, value);
+                value = new string(value.Skip(1).SkipLast(1).ToArray());
+                return source.WhereSearchOnAllField(fieldName, value);
             }
             else if (value.EndsWith("*"))
             {
                 value = new string(value.Skip(1).SkipLast(2).ToArray());
                 return source.WhereSearchOnStartField(fieldName, value);
             }
-            else if (value.StartsWith('*') && value.EndsWith('*'))
+            else if (value.StartsWith("*"))
             {
-                value = new string(value.Skip(1).SkipLast(1).ToArray());
-                return source.WhereSearchOnAllField(fieldName, value);
+                value = new string(value.Skip(2).SkipLast(1).ToArray());
+                return source.WhereSearchOnEndField(fieldName, value);
             }
 
             return source.WhereFieldExact(fieldName, value, typeof(string));
