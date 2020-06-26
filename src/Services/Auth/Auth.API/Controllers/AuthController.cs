@@ -1,6 +1,4 @@
-﻿using ApiLibrary.Core.Base;
-using ApiLibrary.Core.Controllers;
-using Auth.API.Data;
+﻿using Auth.API.Data;
 using Auth.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +13,13 @@ using System.Threading.Tasks;
 
 namespace Auth.API.Controllers
 {
-    public class AuthController : ControllerRef<UserDbContext, BaseModel<int>, int>
+    [ApiController]
+    public class AuthController : ControllerBase
     {
-        public AuthController(UserDbContext db) : base(db)
+        private readonly UserDbContext _db;
+        public AuthController(UserDbContext db)
         {
+            _db = db;
         }
 
         [Route("/api/v{version:apiVersion}/login")]
@@ -45,17 +46,18 @@ namespace Auth.API.Controllers
             userMap.Add("user", username);
             userMap.Add("token", tokenHandler.WriteToken(token));
 
-            User myUser = new User { 
-                Login = username, 
+            User myUser = new User {
+                Login = username,
                 Password = password,
-                Token = tokenHandler.WriteToken(token)
+                Token = tokenHandler.WriteToken(token),
+                createdAt = DateTime.Now
             };
 
             if(ModelState.IsValid)
             {
                 try
                 {
-                    _db.Users.Update(myUser);
+                    _db.Users.Add(myUser);
                     await _db.SaveChangesAsync();
                 }catch(Exception e)
                 {

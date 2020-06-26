@@ -1,5 +1,4 @@
-﻿using ApiLibrary.Core.Base;
-using Auth.API.Models;
+﻿using Auth.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Auth.API.Data
 {
-    public class UserDbContext : BaseDbContext
+    public class UserDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
 

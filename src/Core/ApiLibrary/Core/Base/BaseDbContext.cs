@@ -1,4 +1,5 @@
 ﻿using ApiLibrary.Core.Attributes;
+using Auth.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace ApiLibrary.Core.Base
 {
     public class BaseDbContext : DbContext
     {
+        public DbSet<User> Users { get; set; }
+
         public BaseDbContext() : base()
         {
 

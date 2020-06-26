@@ -10,11 +10,11 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using ApiLibrary.Core.Utils;
-using System.Collections.Specialized;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using Auth.API.Models;
 
 namespace ApiLibrary.Core.Controllers
 {
@@ -40,6 +40,32 @@ namespace ApiLibrary.Core.Controllers
         public ControllerRef(C db)
         {
             _db = db;
+        }
+
+        private bool IsAuthenticated(HttpRequest req)
+        {
+            StringValues bearerToken;
+            if(req.Headers.ContainsKey("Authorization"))
+            {
+                var canGetKey = req.Headers.TryGetValue("Authorization", out bearerToken);
+                if(canGetKey)
+                {
+                    string tokenValue =new string(bearerToken.ToString().Skip(7).ToArray());
+
+                    var userSet = _db.Users.Where(x => x.Token == tokenValue);
+                    if(userSet == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+
+            }
+
+            return false;
         }
 
         // Methods générique
@@ -240,6 +266,10 @@ namespace ApiLibrary.Core.Controllers
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<ActionResult> CreateElement([FromBody] T item)
         {
+            if(!IsAuthenticated(this.Request))
+            {
+                return Unauthorized();
+            }
             if (ModelState.IsValid)
             {
                 _db.Set<T>().Add(item);
@@ -261,6 +291,10 @@ namespace ApiLibrary.Core.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult> UpdateElement([FromRoute] K id, [FromBody] T item)
         {
+            if (!IsAuthenticated(this.Request))
+            {
+                return Unauthorized();
+            }
             if (!(ModelState.IsValid))
             {
                 return BadRequest(ModelState);
@@ -290,6 +324,10 @@ namespace ApiLibrary.Core.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<ActionResult> DeleteElement([FromRoute] int id)
         {
+            if (!IsAuthenticated(this.Request))
+            {
+                return Unauthorized();
+            }
             T delItem = await _db.Set<T>().FindAsync(id);
             if (delItem == null)
                 return NotFound();

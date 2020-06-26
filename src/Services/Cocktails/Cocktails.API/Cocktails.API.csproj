@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\ApiLibrary\ApiLibrary.csproj" />
+    <ProjectReference Include="..\..\Auth\Auth.API\Auth.API.csproj" />
   </ItemGroup>
 
 </Project>
