@@ -1,0 +1,957 @@
+{
+	"info": {
+		"_postman_id": "882be782-2440-4ae2-bb70-6db5c1564027",
+		"name": "CoreDFRY",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Michou",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "motdepasse",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetCoktail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "11",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Nom",
+							"value": "Sex On The Beach",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Origine",
+							"value": "Brésil",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Alcool",
+							"value": "True",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Rating",
+							"value": "6,9",
+							"type": "text",
+							"disabled": true
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/cocktail/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"cocktail",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostCoktail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Nom\" : \"Old Fashioned\",\r\n    \"Origine\" : \"Angleterre\",\r\n    \"Alcool\" : true,\r\n    \"Rating\" : 5.7\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/cocktail/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"cocktail",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateCoktail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 13,\r\n    \"Nom\" : \"Nouveau Cocktail\",\r\n    \"Origine\" : \"Paraguay\",\r\n    \"Alcool\" : true,\r\n    \"Rating\" : 7.2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/cocktail/13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"cocktail",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteCoktail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/cocktail/17",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"cocktail",
+						"17"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetIngredient",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "11",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Nom",
+							"value": "Sex On The Beach",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Origine",
+							"value": "Brésil",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Alcool",
+							"value": "True",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Rating",
+							"value": "6,9",
+							"type": "text",
+							"disabled": true
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/ingredient/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"ingredient",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostIngredient",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Nom\" : \"Vodka\",\r\n    \"Teneur_Alcool\" : 0.21,\r\n    \"Mesure\" : \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/ingredient/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"ingredient",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateIngredient",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 10,\r\n    \"Nom\" : \"Vodka\",\r\n    \"Teneur_Alcool\" : 0.22,\r\n    \"Mesure\" : \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/ingredient/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"ingredient",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteIngredient",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/ingredient/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"ingredient",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetPreparation",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "11",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Nom",
+							"value": "Sex On The Beach",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Origine",
+							"value": "Brésil",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Alcool",
+							"value": "True",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Rating",
+							"value": "6,9",
+							"type": "text",
+							"disabled": true
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/preparation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"preparation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostPreparation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ID_Cocktail\" : 17,\r\n    \"ID_Ing\" : 14,\r\n    \"Quantite\" : 0.2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/preparation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"preparation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdatePreparation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/preparation/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"preparation",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeletePreparation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/preparation/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"preparation",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOrder",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "11",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Nom",
+							"value": "Sex On The Beach",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Origine",
+							"value": "Brésil",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Alcool",
+							"value": "True",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "Rating",
+							"value": "6,9",
+							"type": "text",
+							"disabled": true
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/order/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"order",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/order/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"order",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/order/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"order",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/order/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"order",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOrderDetails",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/orderdetails/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"orderdetails",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostOrderDetails",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ID_Order\" : 3,\r\n    \"ID_Cocktail\" : 15,\r\n    \"Quantite\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/orderdetails",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"orderdetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateOrderDetails",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 3,\r\n    \"ID_Order\" : 1,\r\n    \"ID_Cocktail\" : 12,\r\n    \"Quantite\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/orderdetails/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"orderdetails",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteOrderDetails",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hvdSIsIm5iZiI6MTU5MzE4MjA2NiwiZXhwIjoxNTkzMTk2NDY2LCJpYXQiOjE1OTMxODIwNjZ9.ZmyeP0IRbciHXV0FGoXBdBIuCdYkd8inszhjL7rR3Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/orderdetails/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"orderdetails",
+						"4"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
