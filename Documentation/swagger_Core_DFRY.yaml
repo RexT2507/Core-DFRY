@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  description: "Projet Architecture logiciel : API Coktail" 
+  description: 'Projet Architecture logiciel : API Coktail'
   version: 1.0.0
   title: Projet Architecture logiciel
   license:
@@ -16,6 +16,10 @@ tags:
   description: CRUD lié aux ingrédients
 - name: Cocktail
   description: CRUD lié aux cocktail
+- name: Préparation
+  description: CRUD lié à la préparation des cocktails
+- name: Order
+  description: CRUD lié à la commande des cocktails
 schemes:
 - https
 - http
@@ -29,32 +33,28 @@ paths:
       produces:
       - application/json
       parameters:
-      - in: "body"
-        name: "body"
-        description: "champs de login"
+      - in: body
+        name: body
+        description: champs de login
         required: true
         schema:
-          type: "object"
-          properties:
-            username:
-              type: "string"
-              minLength: 1
-              maxLength: 50
-            password:
-              type: "integer"
-              format: "double"
+          $ref: '#/definitions/body'
       responses:
         "200":
           description: Succès
           schema:
             properties:
-              token: 
-                type: "string"
+              username:
+                type: string
                 minLength: 1
-                maxLength: 50
+                maxLength: 256
+              token:
+                type: string
+                minLength: 1
+                maxLength: 256
         "404":
           description: Ressouce non trouvée
-  /ing:
+  /ingredient:
     get:
       tags:
       - Ingrédients
@@ -65,7 +65,7 @@ paths:
       parameters: []
       responses:
         "200":
-          description: Succès - Renvoi les ingrédients
+          description: Succès - Renvoi des ingrédients
           schema:
             type: array
             items:
@@ -75,145 +75,119 @@ paths:
     post:
       tags:
       - Ingrédients
-      summary: "Création d'un ingrédient"
+      summary: Création d'un ingrédient
       operationId: PostIngredients
       produces:
       - application/json
       parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "bearer token de l'utilisateur"
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
         required: true
-        type: "string"
-        minLength: 7
+        type: string
         maxLength: 255
-      - in: "body"
-        name: "body"
-        description: "attributs de l'ingrédient"
+        minLength: 7
+      - in: body
+        name: body
+        description: attributs de l'ingrédient
         required: true
         schema:
-          type: "object"
-          properties:
-            Nom:
-              type: "string"
-              minLength: 1
-              maxLength: 50
-            Teneur_Alcool:
-              type: "integer"
-              format: "double"
-            Mesure:
-              type: "string"
-              minLength: 1
-              maxLength: 10
+          $ref: '#/definitions/body_1'
       responses:
-        "200":
-          description: Succès - Renvoi l'ingrédient créé
-          schema: 
+        "201":
+          description: Ingrédient créé
+          schema:
             $ref: '#/definitions/Ingredient'
-        "404":
-          description: Ressouce non trouvée
-  /ing/{ingredientId}:
+        "400":
+          description: Bad Request - Arguments mal renseignés
+  /ingredient/{ingredientId}:
     get:
       tags:
       - Ingrédients
-      summary: "Renvoi d'un ingrédient"
+      summary: Renvoi d'un ingrédient
       operationId: GetIngredientsById
       produces:
       - application/json
       parameters:
-        - in: "path"
-          name: "ingredientId"
-          description: "id de l'ingredient à renvoyer"
-          required: true
-          type: "integer"
-          format: "int64"
+      - name: ingredientId
+        in: path
+        description: id de l'ingredient à renvoyer
+        required: true
+        type: integer
+        format: int64
       responses:
         "200":
-          description: "Succès - Renvoi l'ingrédients dont l'id est passé en paramètre"
+          description: Succès - Renvoi l'ingrédient dont l'id est passé en paramètre
           schema:
             type: array
             items:
               $ref: '#/definitions/Ingredient'
         "404":
           description: Ressouce non trouvée
+    put:
+      tags:
+      - Ingrédients
+      summary: Modification d'un ingrédient
+      operationId: UpdateIngredient
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      - name: ingredientId
+        in: path
+        description: id de l'ingredient à modifier
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: champs de l'ingredient à modifier
+        required: true
+        schema:
+          $ref: '#/definitions/body_2'
+      responses:
+        "204":
+          description: No Content - Modification acceptée
+        "404":
+          description: Ressouce non trouvée
     delete:
       tags:
       - Ingrédients
-      summary: "Suppression d'un igredient"
+      summary: Suppression d'un igredient
       operationId: DeleteIngredients
       produces:
       - application/json
       parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "bearer token de l'utilisateur"
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
         required: true
-        type: "string"
-        minLength: 7
+        type: string
         maxLength: 255
-      - in: "path"
-        name: "ingredientId"
-        description: "id de l'ingredient à supprimer"
+        minLength: 7
+      - name: ingredientId
+        in: path
+        description: id de l'ingredient à supprimer
         required: true
-        type: "integer"
-        format: "int64"
+        type: integer
+        format: int64
       responses:
         "200":
           description: Succès
-        "404":
-          description: Ressouce non trouvée
-    put:
-      tags:
-      - Ingrédients
-      summary: "Modification d'un ingrédient"
-      operationId: PutIngredients
-      produces:
-      - application/json
-      parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "bearer token de l'utilisateur"
-        required: true
-        type: "string"
-        minLength: 7
-        maxLength: 255
-      - in: "path"
-        name: "ingredientId"
-        description: "id de l'ingredient à modifier"
-        required: true
-        type: "integer"
-        format: "int64"
-      - in: "body"
-        name: "body"
-        description: "champs de l'ingredient à modifier"
-        required: true
-        schema:
-            type: "object"
-            properties:
-              Nom:
-                type: "string"
-                minLength: 1
-                maxLength: 50
-              Teneur_Alcool:
-                type: "integer"
-                format: "double"
-              Mesure:
-                type: "string"
-                minLength: 1
-                maxLength: 10
-      responses:
-        "200":
-          description: Succès - Renvoi l'ingrédient modifié
-          schema: 
-            $ref: '#/definitions/Ingredient'
         "404":
           description: Ressouce non trouvée
   /cocktail:
     get:
       tags:
       - Cocktail
-      summary: "Récupération des cocktails"
-      operationId: GetCocktail
+      summary: Récupération des cocktails
+      operationId: GetCocktails
       produces:
       - application/json
       parameters: []
@@ -229,209 +203,548 @@ paths:
     post:
       tags:
       - Cocktail
-      summary: "Création d'un cocktail"
+      summary: Création d'un cocktail
       operationId: PostCocktail
       produces:
       - application/json
       parameters:
-        - in: "header"
-          name: "Authorization"
-          description: "bearer token de l'utilisateur"
-          required: true
-          type: "string"
-          minLength: 7
-          maxLength: 255
-        - in: "body"
-          name: "body"
-          schema:
-            properties:
-              ID:
-                type: "integer"
-                format: "int64"
-              Nom:
-                type: "string"
-                minLength: 1
-                maxLength: 50
-              Origin:
-                type: "string"
-                minLength: 1
-                maxLength: 50
-              Alcool:
-                type: "boolean"
-              ListIngredient:
-                type: array
-                items:
-                  type: "integer"
-                  format: "int64"
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/body_3'
       responses:
         "200":
           description: Succès - Renvoi le cocktail créé
           schema:
             $ref: '#/definitions/Cocktail'
-              
         "404":
           description: Ressouce non trouvée
   /cocktail/{cocktailId}:
     get:
       tags:
       - Cocktail
-      summary: "Renvoi d'un cocktail"
+      summary: Renvoi d'un cocktail
       operationId: GetCocktailById
       produces:
       - application/json
       parameters:
-        - in: "path"
-          name: "cocktailId"
-          description: "id du cocktail à renvoyer"
-          required: true
-          type: "integer"
-          format: "int64"
+      - name: cocktailId
+        in: path
+        description: id du cocktail à renvoyer
+        required: true
+        type: integer
+        format: int64
       responses:
         "200":
-          description: "Succès - Renvoi le cocktail dont l'id est passé en paramètre"
+          description: Succès - Renvoi le cocktail dont l'id est passé en paramètre
           schema:
             $ref: '#/definitions/Cocktail'
-        "404":
-          description: Ressouce non trouvée
-    delete:
-      tags:
-      - Cocktail
-      summary: "Suppression d'un cocktail"
-      operationId: DeleteCocktail
-      produces:
-      - application/json
-      parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "bearer token de l'utilisateur"
-        required: true
-        type: "string"
-        minLength: 7
-        maxLength: 255
-      - in: "path"
-        name: "cocktailId"
-        description: "id du cocktail à supprimer"
-        required: true
-        type: "integer"
-        format: "int64"
-      - in: "body"
-        name: "body"
-        schema:
-          properties:
-            ID:
-              type: "integer"
-              format: "int64"
-            Nom:
-              type: "string"
-              minLength: 1
-              maxLength: 50
-            Origin:
-              type: "string"
-              minLength: 1
-              maxLength: 50
-            Alcool:
-              type: "boolean"
-            ListIngredient:
-              type: array
-              items:
-                type: "integer"
-                format: "int64"
-      responses:
-        "200":
-          description: Succès
         "404":
           description: Ressouce non trouvée
     put:
       tags:
       - Cocktail
-      summary: "Modification d'un cocktail"
+      summary: Modification d'un cocktail
       operationId: PutCocktail
       produces:
       - application/json
       parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "bearer token de l'utilisateur"
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
         required: true
-        type: "string"
-        minLength: 7
+        type: string
         maxLength: 255
-      - in: "path"
-        name: "cocktailId"
-        description: "id du cocktail à modifier"
+        minLength: 7
+      - name: cocktailId
+        in: path
+        description: id du cocktail à modifier
         required: true
-        type: "integer"
-        format: "int64"
-      - in: "body"
-        name: "body"
-        description: "champs du cocktail à modifier"
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: champs du cocktail à modifier
         required: true
         schema:
-            type: "object"
-            properties:
-              Nom:
-                type: "string"
-                minLength: 1
-                maxLength: 50
-              Teneur_Alcool:
-                type: "integer"
-                format: "double"
-              Mesure:
-                type: "string"
-                minLength: 1
-                maxLength: 10
+          $ref: '#/definitions/body_4'
+      responses:
+        "204":
+          description: No content - L'ingrédient a bien été modifié
+        "400":
+          description: Bad Request - Paramètres manquants ou non-valides
+    delete:
+      tags:
+      - Cocktail
+      summary: Suppression d'un cocktail
+      operationId: DeleteCocktail
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      - name: cocktailId
+        in: path
+        description: id du cocktail à supprimer
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/body_5'
       responses:
         "200":
-          description: "Succès - Renvoi l'ingrédients modifier"
+          description: Succès
         "404":
-          description: Ressouce non trouvée
+          description: Ressource non trouvée
+  /preparation:
+    get:
+      tags:
+      - Préparation
+      summary: Récupération de tous les ingrédients liés à tous les cocktails
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      responses:
+        "200":
+          description: Succès - Renvoi de tous les ingrédients liés à tous les cocktails
+        "400":
+          description: Bad Request
+        "401":
+          description: Token non valide - Action non autorisée
+  /preparation/cocktail/{cocktailId}:
+    get:
+      tags:
+      - Préparation
+      summary: Récupération de tous les ingrédients lié à un cocktail
+      produces:
+      - appliction/json
+      parameters:
+      - name: cocktailId
+        in: path
+        description: ID du cocktail
+        required: true
+        type: integer
+        format: int64
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      responses:
+        "200":
+          description: Succès - Renvoi de tous les ingrédients liés au cocktail spécifié
+        "400":
+          description: Bad Request
+        "401":
+          description: Token non valide - opération non autorisée
+    post:
+      tags:
+      - Préparation
+      summary: Ajout d'un ingrédient au cocktail spécifié
+      produces:
+      - application/json
+      parameters:
+      - name: cocktailId
+        in: path
+        description: ID du cocktail
+        required: true
+        type: integer
+        format: int64
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      - in: body
+        name: body
+        description: ingrédient à ajouter
+        required: true
+        schema:
+          $ref: '#/definitions/body_6'
+      responses:
+        "201":
+          description: Created - Renvoi de l'ingrédient ajouté au cocktail
+          schema:
+            $ref: '#/definitions/Preparation'
+  /preparation/ingredient/{ingredientId}:
+    get:
+      tags:
+      - Préparation
+      summary: Récupération de tous les cocktails contenant l'ingrédient spécifié
+      produces:
+      - application/json
+      parameters:
+      - name: ingredientId
+        in: path
+        description: ID du cocktail
+        required: true
+        type: integer
+        format: int64
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      responses:
+        "200":
+          description: Succès - Renvoi de tous les cocktails avec l'ingrédient spécifié
+        "400":
+          description: Bad Request
+        "401":
+          description: Token non valide - opértion non autorisée
+  /preparation/cocktail/{cocktailId}/ingredient/{ingredientId}:
+    put:
+      tags:
+      - Préparation
+      summary: Modifier la quantité d'un ingrédient dans le cocktail spécifié
+      parameters:
+      - name: Authorization
+        in: header
+        description: bearer token de l'utilisateur
+        required: true
+        type: string
+        maxLength: 255
+        minLength: 7
+      - name: ingredientId
+        in: path
+        description: ID de l'ingrédient
+        required: true
+        type: integer
+        format: int64
+      - name: cocktailId
+        in: path
+        description: ID du cocktail
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: ingrédient à modifier
+        required: true
+        schema:
+          $ref: '#/definitions/body_7'
+      responses:
+        "204":
+          description: No content - Modification effectuée
+        "400":
+          description: Bad Request - Format non valide
+        "401":
+          description: Token non valide - Accès non autorisé
+  /order:
+    get:
+      tags:
+      - Order
+      summary: Récupération des ID de commandes
+      parameters: []
+      responses:
+        "200":
+          description: Succès - renvoi des ID
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+        "400":
+          description: Bad Request
+    post:
+      tags:
+      - Order
+      summary: Nouvelle commande
+      parameters:
+      - in: body
+        name: body
+        description: ID de commande
+        required: true
+        schema:
+          $ref: '#/definitions/body_8'
+      responses:
+        "201":
+          description: Commande créée avec succès
+          schema:
+            $ref: '#/definitions/Order'
+  /order/{orderId}:
+    get:
+      tags:
+      - Order
+      summary: Récupération des cocktails liés à l'ID de commande
+      parameters:
+      - name: orderId
+        in: path
+        description: ID de la commande
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: Succès - Renvoi des cocktails liés à la commande
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OrderDetail'
+        "400":
+          description: Bad Request
+        "401":
+          description: Token non valide - opération non autorisée
+    post:
+      tags:
+      - Order
+      summary: Ajout d'une nouvelle entrée pour la commande spécifiée
+      parameters:
+      - name: orderId
+        in: path
+        description: ID de la commande
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: Nouvelle entrée pour commande
+        required: true
+        schema:
+          $ref: '#/definitions/OrderDetail'
+      responses:
+        "201":
+          description: Succès - Entrée ajoutée
+          schema:
+            $ref: '#/definitions/OrderDetail'
+        "400":
+          description: Bad Request - problème de format
+        "401":
+          description: Token non valide - opération non autorisée
 definitions:
   Ingredient:
-    type: "object"
+    type: object
     properties:
       ID:
-        type: "integer"
-        format: "int64"
+        type: integer
+        format: int64
       Nom:
-        type: "string"
+        type: string
         minLength: 1
         maxLength: 50
       Teneur_Alcool:
-        type: "integer"
-        format: "double"
+        type: integer
+        format: double
       Mesure:
-        type: "string"
+        type: string
         minLength: 1
         maxLength: 10
     xml:
-      name: "Ingredient"
-      
+      name: Ingredient
   Cocktail:
-    type: "object"
+    type: object
     properties:
       ID:
-        type: "integer"
-        format: "int64"
+        type: integer
+        format: int64
       Nom:
-        type: "string"
+        type: string
         minLength: 1
         maxLength: 50
       Origin:
-        type: "string"
+        type: string
         minLength: 1
         maxLength: 50
       Alcool:
-        type: "boolean"
+        type: boolean
       ListIngredient:
         type: array
         items:
           $ref: '#/definitions/ItemListQuantite'
-      
-  ItemListQuantite:
-    type: "object"
+  Preparation:
+    type: object
     properties:
-      Quantite: 
-        type: "integer"
-        format: "float"
+      ID:
+        type: integer
+        format: int64
+      ID_Cocktail:
+        type: integer
+        format: int64
+      ID_Ingredient:
+        type: integer
+        format: int64
+      Quantite:
+        type: integer
+        format: float
+  Order:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int64
+  OrderDetail:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int64
+      orderID:
+        type: integer
+        format: int64
+      cocktailID:
+        type: integer
+        format: int64
+      quantite:
+        type: integer
+        format: int64
+  ItemListQuantite:
+    type: object
+    properties:
+      Quantite:
+        type: integer
+        format: float
       Ingredient:
         $ref: '#/definitions/Ingredient'
+  body:
+    type: object
+    properties:
+      username:
+        type: string
+        minLength: 1
+        maxLength: 50
+      password:
+        type: string
+        minLength: 1
+        maxLength: 50
+  body_1:
+    type: object
+    properties:
+      Nom:
+        type: string
+        minLength: 1
+        maxLength: 50
+      Teneur_Alcool:
+        type: integer
+        format: double
+      Mesure:
+        type: string
+        minLength: 1
+        maxLength: 10
+  body_2:
+    type: object
+    properties:
+      Nom:
+        type: string
+        minLength: 1
+        maxLength: 50
+      Teneur_Alcool:
+        type: integer
+        format: double
+      Mesure:
+        type: string
+        minLength: 1
+        maxLength: 10
+  body_3:
+    properties:
+      ID:
+        type: integer
+        format: int64
+      Nom:
+        type: string
+        minLength: 1
+        maxLength: 50
+      Origin:
+        type: string
+        minLength: 1
+        maxLength: 50
+      Alcool:
+        type: boolean
+      ListIngredient:
+        type: array
+        items:
+          type: integer
+          format: int64
+  body_4:
+    type: object
+    properties:
+      Nom:
+        type: string
+        minLength: 1
+        maxLength: 50
+      Teneur_Alcool:
+        type: integer
+        format: double
+      Mesure:
+        type: string
+        minLength: 1
+        maxLength: 10
+  body_5:
+    properties:
+      ID:
+        type: integer
+        format: int64
+      Nom:
+        type: string
+        minLength: 1
+        maxLength: 50
+      Origin:
+        type: string
+        minLength: 1
+        maxLength: 50
+      Alcool:
+        type: boolean
+      ListIngredient:
+        type: array
+        items:
+          type: integer
+          format: int64
+  body_6:
+    type: object
+    properties:
+      ingredientId:
+        type: integer
+        format: int64
+      teneurAlcool:
+        type: integer
+        format: double
+      mesure:
+        type: string
+        minLength: 1
+        maxLength: 10
+  body_7:
+    type: object
+    properties:
+      ingredientId:
+        type: integer
+        format: int64
+      teneurAlcool:
+        type: integer
+        format: double
+      mesure:
+        type: string
+        minLength: 1
+        maxLength: 10
+  body_8:
+    type: object
+    properties:
+      orderId:
+        type: integer
+        format: int64
